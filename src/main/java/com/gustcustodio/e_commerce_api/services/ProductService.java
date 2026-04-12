@@ -7,6 +7,7 @@ import com.gustcustodio.e_commerce_api.repositories.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -45,6 +46,11 @@ public class ProductService {
         convertDtoToEntity(productRequestDTO, entity);
         entity = productRepository.save(entity);
         return new ProductResponseDTO(entity);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 
     public void convertDtoToEntity(ProductRequestDTO productRequestDTO, Product entity) {
