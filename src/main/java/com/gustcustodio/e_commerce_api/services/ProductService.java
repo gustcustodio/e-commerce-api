@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class ProductService {
@@ -35,6 +34,14 @@ public class ProductService {
     @Transactional
     public ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
         Product entity = new Product();
+        convertDtoToEntity(productRequestDTO, entity);
+        entity = productRepository.save(entity);
+        return new ProductResponseDTO(entity);
+    }
+
+    @Transactional
+    public ProductResponseDTO updateProduct(Long id, ProductRequestDTO productRequestDTO) {
+        Product entity = productRepository.getReferenceById(id);
         convertDtoToEntity(productRequestDTO, entity);
         entity = productRepository.save(entity);
         return new ProductResponseDTO(entity);
