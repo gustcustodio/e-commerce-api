@@ -1,10 +1,14 @@
 package com.gustcustodio.e_commerce_api.controllers;
 
+import com.gustcustodio.e_commerce_api.dtos.ProductRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductResponseDTO;
 import com.gustcustodio.e_commerce_api.services.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/products")
@@ -27,6 +31,13 @@ public class ProductController {
                                                                     @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) {
         Page<ProductResponseDTO> page = productService.findAllProducts(pageNumber, pageSize);
         return ResponseEntity.ok(page);
+    }
+
+    @PostMapping
+    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRequestDTO productRequestDTO) {
+        ProductResponseDTO productResponseDTO = productService.createProduct(productRequestDTO);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(productResponseDTO.id()).toUri();
+        return ResponseEntity.created(uri).body(productResponseDTO);
     }
 
 }
