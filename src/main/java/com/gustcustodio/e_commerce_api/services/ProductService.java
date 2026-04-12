@@ -4,6 +4,8 @@ import com.gustcustodio.e_commerce_api.dtos.ProductRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductResponseDTO;
 import com.gustcustodio.e_commerce_api.entities.Product;
 import com.gustcustodio.e_commerce_api.repositories.ProductRepository;
+import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductResponseDTO findProductWithCategories(Long id) {
-        Product entity = productRepository.findProductWithCategories(id).orElseThrow();
+        Product entity = productRepository.findProductWithCategories(id).orElseThrow(() -> new ResourceNotFoundException());
         return new ProductResponseDTO(entity);
     }
 
@@ -42,14 +44,19 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO productRequestDTO) {
-        Product entity = productRepository.getReferenceById(id);
-        convertDtoToEntity(productRequestDTO, entity);
-        entity = productRepository.save(entity);
-        return new ProductResponseDTO(entity);
+        try {
+            Product entity = productRepository.getReferenceById(id);
+            convertDtoToEntity(productRequestDTO, entity);
+            entity = productRepository.save(entity);
+            return new ProductResponseDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void deleteProduct(Long id) {
+        if (!productRepository.existsById(id)) throw new ResourceNotFoundException();
         productRepository.deleteById(id);
     }
 
