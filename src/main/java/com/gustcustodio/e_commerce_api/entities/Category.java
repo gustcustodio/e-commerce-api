@@ -60,4 +60,13 @@ public class Category {
         return Objects.hashCode(getId());
     }
 
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", products=" + products +
+                '}';
+    }
+
 }

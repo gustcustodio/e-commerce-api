@@ -95,4 +95,16 @@ public class Product {
         return Objects.hashCode(getId());
     }
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", categories=" + categories +
+                '}';
+    }
+
 }
