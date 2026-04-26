@@ -3,6 +3,7 @@ package com.gustcustodio.e_commerce_api.controllers;
 import com.gustcustodio.e_commerce_api.dtos.ProductRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductResponseDTO;
 import com.gustcustodio.e_commerce_api.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +35,14 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
         ProductResponseDTO productResponseDTO = productService.createProduct(productRequestDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(productResponseDTO.id()).toUri();
         return ResponseEntity.created(uri).body(productResponseDTO);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @RequestBody ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO productRequestDTO) {
         ProductResponseDTO productResponseDTO = productService.updateProduct(id, productRequestDTO);
         return ResponseEntity.ok(productResponseDTO);
     }
