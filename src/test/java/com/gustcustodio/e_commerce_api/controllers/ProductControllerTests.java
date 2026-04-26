@@ -2,6 +2,7 @@ package com.gustcustodio.e_commerce_api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gustcustodio.e_commerce_api.constructors.Factory;
+import com.gustcustodio.e_commerce_api.dtos.CategoryResponseDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductResponseDTO;
 import com.gustcustodio.e_commerce_api.services.ProductService;
@@ -10,6 +11,9 @@ import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundExcep
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
@@ -19,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -102,6 +108,23 @@ public class ProductControllerTests {
                 .andExpect(jsonPath("$.name", is(productResponseDTO.name())));
     }
 
+    @ParameterizedTest
+    @MethodSource(value = "providerOfInvalidProductRequestDTO")
+    public void createProductShouldReturnUnprocessableEntityWhenProductRequestDTOHasInvalidData(
+            String name,
+            String description,
+            Double price,
+            Integer quantity,
+            Set<CategoryResponseDTO> categories
+    ) throws Exception {
+        ProductRequestDTO invalidDTO = new ProductRequestDTO(name, description, price, quantity, categories);
+        ResultActions result = mockMvc.perform(post("/products")
+                .content(objectMapper.writeValueAsString(invalidDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+        result.andExpect(status().isUnprocessableEntity());
+    }
+
     @Test
     public void updateProductShouldReturnProductResponseDTOWhenIdExists() throws Exception {
         ResultActions result = mockMvc.perform(put("/products/{id}", existingId)
@@ -122,6 +145,23 @@ public class ProductControllerTests {
         result.andExpect(status().isNotFound());
     }
 
+    @ParameterizedTest
+    @MethodSource(value = "providerOfInvalidProductRequestDTO")
+    public void updateProductShouldReturnUnprocessableEntityWhenProductRequestDTOHasInvalidData(
+            String name,
+            String description,
+            Double price,
+            Integer quantity,
+            Set<CategoryResponseDTO> categories
+    ) throws Exception {
+        ProductRequestDTO invalidDTO = new ProductRequestDTO(name, description, price, quantity, categories);
+        ResultActions result = mockMvc.perform(put("/products/{id}", existingId)
+                .content(objectMapper.writeValueAsString(invalidDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+        result.andExpect(status().isUnprocessableEntity());
+    }
+
     @Test
     public void deleteShouldReturnNoContentWhenIdExists() throws Exception {
         ResultActions result = mockMvc.perform(delete("/products/{id}", existingId));
@@ -138,6 +178,15 @@ public class ProductControllerTests {
     public void deleteShouldReturnDatabaseExceptionWhenDependentId() throws Exception {
         ResultActions result = mockMvc.perform(delete("/products/{id}", dependentId));
         result.andExpect(status().isBadRequest());
+    }
+
+    static Stream<Arguments> providerOfInvalidProductRequestDTO() {
+        return Stream.of(
+                Arguments.of(null, "Valid Product Description", 50.0, 10, Set.of(Factory.createCategoryResponseDTO())),
+                Arguments.of("Valid Product", null, 50.0, 10, Set.of(Factory.createCategoryResponseDTO())),
+                Arguments.of("Valid Product", "Valid Product Description", -50.0, 10, Set.of(Factory.createCategoryResponseDTO())),
+                Arguments.of("Valid Product", "Valid Product Description", 50.0, -10, Set.of(Factory.createCategoryResponseDTO()))
+        );
     }
 
 }
