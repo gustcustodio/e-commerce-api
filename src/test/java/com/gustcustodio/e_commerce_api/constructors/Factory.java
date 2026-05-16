@@ -1,5 +1,6 @@
 package com.gustcustodio.e_commerce_api.constructors;
 
+import com.gustcustodio.e_commerce_api.dtos.CategoryRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.CategoryResponseDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductResponseDTO;
@@ -28,6 +29,10 @@ public class Factory {
 
     public static CategoryResponseDTO createCategoryResponseDTO() {
         return new CategoryResponseDTO(createCategory());
+    }
+
+    public static CategoryRequestDTO createCategoryRequestDTO() {
+        return new CategoryRequestDTO("Books");
     }
 
 }
