@@ -43,7 +43,7 @@ public class ProductService {
     @Transactional
     public ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
         Product entity = new Product();
-        convertDtoToEntity(productRequestDTO, entity);
+        copyDtoToEntity(productRequestDTO, entity);
         entity = productRepository.save(entity);
         return new ProductResponseDTO(entity);
     }
@@ -51,7 +51,7 @@ public class ProductService {
     @Transactional
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO productRequestDTO) {
         Product entity = productRepository.findProductWithCategories(id).orElseThrow(ResourceNotFoundException::new);
-        convertDtoToEntity(productRequestDTO, entity);
+        copyDtoToEntity(productRequestDTO, entity);
         entity = productRepository.save(entity);
         return new ProductResponseDTO(entity);
     }
@@ -66,7 +66,7 @@ public class ProductService {
         }
     }
 
-    public void convertDtoToEntity(ProductRequestDTO productRequestDTO, Product entity) {
+    private void copyDtoToEntity(ProductRequestDTO productRequestDTO, Product entity) {
         entity.setName(productRequestDTO.name());
         entity.setDescription(productRequestDTO.description());
         entity.setPrice(productRequestDTO.price());
