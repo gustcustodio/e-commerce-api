@@ -28,3 +28,23 @@ INSERT INTO tb_product_category (product_id, category_id) VALUES (10, 1);
 INSERT INTO tb_product_category (product_id, category_id) VALUES (11, 1);
 INSERT INTO tb_product_category (product_id, category_id) VALUES (12, 2);
 INSERT INTO tb_product_category (product_id, category_id) VALUES (12, 3);
+
+INSERT INTO tb_user(name, email, password) VALUES ('Liev Tolstói', 'tolstoi@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe');
+INSERT INTO tb_user(name, email, password) VALUES ('Charles Dickens', 'dickens@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe');
+INSERT INTO tb_user(name, email, password) VALUES ('Oscar Wilde', 'wilde@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe');
+
+INSERT INTO tb_role (authority) VALUES ('ROLE_ADMIN');
+INSERT INTO tb_role (authority) VALUES ('ROLE_CLIENT');
+
+INSERT INTO tb_user_role (user_id, role_id) VALUES (1, 2);
+INSERT INTO tb_user_role (user_id, role_id) VALUES (2, 1);
+INSERT INTO tb_user_role (user_id, role_id) VALUES (2, 2);
+INSERT INTO tb_user_role (user_id, role_id) VALUES (3, 2);
+
+INSERT INTO tb_order (order_date, order_status, client_id) VALUES (TIMESTAMP WITH TIME ZONE '2026-03-25T13:00:00Z', 0, 1);
+INSERT INTO tb_order (order_date, order_status, client_id) VALUES (TIMESTAMP WITH TIME ZONE '2026-04-29T15:50:00Z', 0, 2);
+INSERT INTO tb_order (order_date, order_status, client_id) VALUES (TIMESTAMP WITH TIME ZONE '2026-05-03T14:20:00Z', 1, 1);
+
+INSERT INTO tb_order_item (order_id, product_id, quantity, price) VALUES (1, 1, 1, 35.50);
+INSERT INTO tb_order_item (order_id, product_id, quantity, price) VALUES (2, 4, 1, 42.90);
+INSERT INTO tb_order_item (order_id, product_id, quantity, price) VALUES (3, 2, 2, 56.00);
