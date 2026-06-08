@@ -2,6 +2,7 @@ package com.gustcustodio.e_commerce_api.controllers.handler;
 
 import com.gustcustodio.e_commerce_api.dtos.CustomErrorDTO;
 import com.gustcustodio.e_commerce_api.dtos.ValidationErrorDTO;
+import com.gustcustodio.e_commerce_api.services.exceptions.CredentialsException;
 import com.gustcustodio.e_commerce_api.services.exceptions.DatabaseException;
 import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +27,13 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(DatabaseException.class)
     public ResponseEntity<CustomErrorDTO> toDatabaseException(DatabaseException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        CustomErrorDTO customErrorDTO = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(customErrorDTO);
+    }
+
+    @ExceptionHandler(CredentialsException.class)
+    public ResponseEntity<CustomErrorDTO> toCredentialsException(CredentialsException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         CustomErrorDTO customErrorDTO = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(customErrorDTO);
