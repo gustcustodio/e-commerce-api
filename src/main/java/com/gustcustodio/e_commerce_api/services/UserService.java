@@ -9,17 +9,25 @@ import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundExcep
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     public UserResponseDTO findUserById(Long id) {
@@ -31,13 +39,6 @@ public class UserService {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<User> page = userRepository.findAll(pageRequest);
         return page.map(UserResponseDTO::new);
-    }
-
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
-        User entity = new User();
-        copyDtoToEntity(userRequestDTO, entity);
-        entity = userRepository.save(entity);
-        return new UserResponseDTO(entity);
     }
 
     public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
@@ -57,12 +58,12 @@ public class UserService {
         }
     }
 
-    private void copyDtoToEntity(UserRequestDTO userRequestDTO, User entity) {
-        entity.setName(userRequestDTO.name());
-        entity.setCpf(userRequestDTO.cpf());
-        entity.setPhone(userRequestDTO.phone());
-        entity.setEmail(userRequestDTO.email());
-        entity.setPassword(userRequestDTO.password());
+    private void copyDtoToEntity(UserRequestDTO dto, User entity) {
+        entity.setName(dto.name());
+        entity.setCpf(dto.cpf());
+        entity.setPhone(dto.phone());
+        entity.setEmail(dto.email());
+        entity.setPassword(dto.password());
     }
 
 }
