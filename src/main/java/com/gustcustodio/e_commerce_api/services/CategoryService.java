@@ -38,7 +38,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) {
         Category entity = new Category();
-        convertDtoToEntity(categoryRequestDTO, entity);
+        copyDtoToEntity(categoryRequestDTO, entity);
         entity = categoryRepository.save(entity);
         return new CategoryResponseDTO(entity);
     }
@@ -46,7 +46,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponseDTO updateCategory(Long id, CategoryRequestDTO categoryRequestDTO) {
         Category entity = categoryRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        convertDtoToEntity(categoryRequestDTO, entity);
+        copyDtoToEntity(categoryRequestDTO, entity);
         entity = categoryRepository.save(entity);
         return new CategoryResponseDTO(entity);
     }
@@ -61,8 +61,8 @@ public class CategoryService {
         }
     }
 
-    private void convertDtoToEntity(CategoryRequestDTO categoryRequestDTO, Category entity) {
-        entity.setName(categoryRequestDTO.name());
+    private void copyDtoToEntity(CategoryRequestDTO dto, Category entity) {
+        entity.setName(dto.name());
     }
 
 }

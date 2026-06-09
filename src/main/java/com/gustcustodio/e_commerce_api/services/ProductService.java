@@ -66,13 +66,13 @@ public class ProductService {
         }
     }
 
-    private void copyDtoToEntity(ProductRequestDTO productRequestDTO, Product entity) {
-        entity.setName(productRequestDTO.name());
-        entity.setDescription(productRequestDTO.description());
-        entity.setPrice(productRequestDTO.price());
-        entity.setQuantity(productRequestDTO.quantity());
+    private void copyDtoToEntity(ProductRequestDTO dto, Product entity) {
+        entity.setName(dto.name());
+        entity.setDescription(dto.description());
+        entity.setPrice(dto.price());
+        entity.setQuantity(dto.quantity());
         entity.getCategories().clear();
-        for (CategoryResponseDTO categoryResponseDTO : productRequestDTO.categories()) {
+        for (CategoryResponseDTO categoryResponseDTO : dto.categories()) {
             Category category = categoryRepository.getReferenceById(categoryResponseDTO.id());
             entity.getCategories().add(category);
         }
