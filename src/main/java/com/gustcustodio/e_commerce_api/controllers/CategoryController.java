@@ -6,6 +6,7 @@ import com.gustcustodio.e_commerce_api.services.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -34,6 +35,7 @@ public class CategoryController {
         return ResponseEntity.ok(page);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryRequestDTO categoryRequestDTO) {
         CategoryResponseDTO categoryResponseDTO = categoryService.createCategory(categoryRequestDTO);
@@ -41,12 +43,14 @@ public class CategoryController {
         return ResponseEntity.created(uri).body(categoryResponseDTO);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequestDTO categoryRequestDTO) {
         CategoryResponseDTO categoryResponseDTO = categoryService.updateCategory(id, categoryRequestDTO);
         return ResponseEntity.ok(categoryResponseDTO);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);

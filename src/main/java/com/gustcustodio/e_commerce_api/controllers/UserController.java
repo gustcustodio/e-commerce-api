@@ -6,10 +6,8 @@ import com.gustcustodio.e_commerce_api.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -21,12 +19,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserResponseDTO> findUserById(@PathVariable Long id) {
         UserResponseDTO dto = userService.findUserById(id);
         return ResponseEntity.ok(dto);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<Page<UserResponseDTO>> findAllUsers(@RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
                                                               @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) {
@@ -34,12 +34,14 @@ public class UserController {
         return ResponseEntity.ok(page);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO userResponseDTO = userService.updateUser(id, userRequestDTO);
         return ResponseEntity.ok(userResponseDTO);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
