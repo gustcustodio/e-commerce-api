@@ -28,7 +28,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "client")
     private Set<Order> orders = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
