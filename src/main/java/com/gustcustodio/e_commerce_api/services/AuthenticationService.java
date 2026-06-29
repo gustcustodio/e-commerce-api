@@ -11,16 +11,19 @@ import com.gustcustodio.e_commerce_api.entities.User;
 import com.gustcustodio.e_commerce_api.repositories.RoleRepository;
 import com.gustcustodio.e_commerce_api.repositories.UserRepository;
 import com.gustcustodio.e_commerce_api.services.exceptions.CredentialsException;
+import com.gustcustodio.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthService {
+public class AuthenticationService {
 
     private UserRepository userRepository;
     private RoleRepository roleRepository;
@@ -28,7 +31,7 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
     private TokenProvider tokenProvider;
 
-    public AuthService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenProvider tokenProvider) {
+    public AuthenticationService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -53,6 +56,19 @@ public class AuthService {
             return new LoginResponseDTO(token);
         } catch (BadCredentialsException e) {
             throw new CredentialsException();
+        }
+    }
+
+    public void validateUser(Long userId) {
+        User currentUser = loggedUser();
+        if (!currentUser.hasRole("ROLE_ADMIN") && !currentUser.getId().equals(userId)) throw new ForbiddenException();
+    }
+
+    protected User loggedUser() {
+        try {
+            return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Username not found");
         }
     }
 
