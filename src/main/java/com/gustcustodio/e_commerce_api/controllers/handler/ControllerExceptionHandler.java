@@ -4,6 +4,7 @@ import com.gustcustodio.e_commerce_api.dtos.CustomErrorDTO;
 import com.gustcustodio.e_commerce_api.dtos.ValidationErrorDTO;
 import com.gustcustodio.e_commerce_api.services.exceptions.CredentialsException;
 import com.gustcustodio.e_commerce_api.services.exceptions.DatabaseException;
+import com.gustcustodio.e_commerce_api.services.exceptions.ForbiddenException;
 import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,13 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(CredentialsException.class)
     public ResponseEntity<CustomErrorDTO> toCredentialsException(CredentialsException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
+        CustomErrorDTO customErrorDTO = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(customErrorDTO);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<CustomErrorDTO> toForbiddenException(ForbiddenException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
         CustomErrorDTO customErrorDTO = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(customErrorDTO);
     }
