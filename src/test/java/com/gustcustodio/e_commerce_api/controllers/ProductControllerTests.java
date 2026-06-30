@@ -1,11 +1,14 @@
 package com.gustcustodio.e_commerce_api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gustcustodio.e_commerce_api.constructors.Factory;
+import com.gustcustodio.e_commerce_api.config.JwtAuthenticationFilter;
+import com.gustcustodio.e_commerce_api.factories.CategoryFactory;
+import com.gustcustodio.e_commerce_api.factories.ProductFactory;
 import com.gustcustodio.e_commerce_api.dtos.CategoryResponseDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.ProductResponseDTO;
 import com.gustcustodio.e_commerce_api.services.ProductService;
+import com.gustcustodio.e_commerce_api.services.UserService;
 import com.gustcustodio.e_commerce_api.services.exceptions.DatabaseException;
 import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import org.hamcrest.CoreMatchers;
@@ -15,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
@@ -34,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = ProductController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class ProductControllerTests {
 
     @Autowired
@@ -44,6 +49,12 @@ public class ProductControllerTests {
 
     @MockitoBean
     private ProductService productService;
+
+    @MockitoBean
+    private UserService userService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private Long existingId;
     private Long nonExistingId;
@@ -57,8 +68,8 @@ public class ProductControllerTests {
         existingId = 1L;
         nonExistingId = 1000L;
         dependentId = 2L;
-        productRequestDTO = Factory.createProductRequestDTO();
-        productResponseDTO = Factory.createProductResponseDTO();
+        productRequestDTO = ProductFactory.createProductRequestDTO();
+        productResponseDTO = ProductFactory.createProductResponseDTO();
         page = new PageImpl<>(List.of(productResponseDTO));
 
         when(productService.findProductWithCategories(existingId)).thenReturn(productResponseDTO);
@@ -182,10 +193,10 @@ public class ProductControllerTests {
 
     static Stream<Arguments> providerOfInvalidProductRequestDTO() {
         return Stream.of(
-                Arguments.of(null, "Valid Product Description", 50.0, 10, Set.of(Factory.createCategoryResponseDTO())),
-                Arguments.of("Valid Product", null, 50.0, 10, Set.of(Factory.createCategoryResponseDTO())),
-                Arguments.of("Valid Product", "Valid Product Description", -50.0, 10, Set.of(Factory.createCategoryResponseDTO())),
-                Arguments.of("Valid Product", "Valid Product Description", 50.0, -10, Set.of(Factory.createCategoryResponseDTO()))
+                Arguments.of(null, "Valid Product Description", 50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
+                Arguments.of("Valid Product", null, 50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
+                Arguments.of("Valid Product", "Valid Product Description", -50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
+                Arguments.of("Valid Product", "Valid Product Description", 50.0, -10, Set.of(CategoryFactory.createCategoryResponseDTO()))
         );
     }
 
