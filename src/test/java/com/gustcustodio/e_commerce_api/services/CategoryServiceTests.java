@@ -1,6 +1,7 @@
 package com.gustcustodio.e_commerce_api.services;
 
-import com.gustcustodio.e_commerce_api.constructors.Factory;
+import com.gustcustodio.e_commerce_api.factories.CategoryFactory;
+import com.gustcustodio.e_commerce_api.factories.ProductFactory;
 import com.gustcustodio.e_commerce_api.dtos.CategoryRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.CategoryResponseDTO;
 import com.gustcustodio.e_commerce_api.entities.Category;
@@ -49,8 +50,8 @@ public class CategoryServiceTests {
         existingId = 1L;
         nonExistingId = 1000L;
         dependentId = 2L;
-        category = Factory.createCategory();
-        categoryRequestDTO = Factory.createCategoryRequestDTO();
+        category = CategoryFactory.createCategory();
+        categoryRequestDTO = CategoryFactory.createCategoryRequestDTO();
         page = new PageImpl<>(List.of(category));
 
         when(categoryRepository.findById(existingId)).thenReturn(Optional.of(category));
