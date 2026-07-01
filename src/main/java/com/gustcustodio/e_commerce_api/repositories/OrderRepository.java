@@ -29,7 +29,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "WHERE order.id IN :ids")
     List<Order> findOrdersWithDetailsByIds(List<Long> ids);
 
-    @Modifying
+    @Modifying(clearAutomatically=true, flushAutomatically=true)
     @Query("DELETE FROM Order order WHERE order.id = :id")
     void deleteOrderById(Long id);
 
