@@ -56,9 +56,7 @@ public class ProductControllerTests {
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    private Long existingId;
-    private Long nonExistingId;
-    private Long dependentId;
+    private Long existingId, nonExistingId, dependentId;
     private ProductRequestDTO productRequestDTO;
     private ProductResponseDTO productResponseDTO;
     private PageImpl<ProductResponseDTO> page;
@@ -148,7 +146,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    public void updateShouldReturnNotFoundWhenIdDoesNotExists() throws Exception {
+    public void updateProductShouldReturnNotFoundWhenIdDoesNotExists() throws Exception {
         ResultActions result = mockMvc.perform(put("/products/{id}", nonExistingId)
                 .content(objectMapper.writeValueAsString(productRequestDTO))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -174,29 +172,29 @@ public class ProductControllerTests {
     }
 
     @Test
-    public void deleteShouldReturnNoContentWhenIdExists() throws Exception {
+    public void deleteProductShouldReturnNoContentWhenIdExists() throws Exception {
         ResultActions result = mockMvc.perform(delete("/products/{id}", existingId));
         result.andExpect(status().isNoContent());
     }
 
     @Test
-    public void deleteShouldReturnNotFoundWhenIdDoesNotExists() throws Exception {
+    public void deleteProductShouldReturnNotFoundWhenIdDoesNotExists() throws Exception {
         ResultActions result = mockMvc.perform(delete("/products/{id}", nonExistingId));
         result.andExpect(status().isNotFound());
     }
 
     @Test
-    public void deleteShouldReturnDatabaseExceptionWhenDependentId() throws Exception {
+    public void deleteProductShouldReturnDatabaseExceptionWhenDependentId() throws Exception {
         ResultActions result = mockMvc.perform(delete("/products/{id}", dependentId));
         result.andExpect(status().isBadRequest());
     }
 
     static Stream<Arguments> providerOfInvalidProductRequestDTO() {
         return Stream.of(
-                Arguments.of(null, "Valid Product Description", 50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
-                Arguments.of("Valid Product", null, 50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
-                Arguments.of("Valid Product", "Valid Product Description", -50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
-                Arguments.of("Valid Product", "Valid Product Description", 50.0, -10, Set.of(CategoryFactory.createCategoryResponseDTO()))
+                Arguments.of(null, "Invalid Product Description", 50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
+                Arguments.of("Invalid Product", null, 50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
+                Arguments.of("Invalid Product", "Invalid Product Description", -50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
+                Arguments.of("Invalid Product", "Invalid Product Description", 50.0, -10, Set.of(CategoryFactory.createCategoryResponseDTO()))
         );
     }
 
