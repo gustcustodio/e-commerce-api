@@ -69,7 +69,8 @@ public class ProductServiceTests {
         when(productRepository.findProductWithCategories(nonExistingId)).thenReturn(Optional.empty());
         when(productRepository.findAllProducts(any(Pageable.class))).thenReturn(page);
         when(productRepository.save(any(Product.class))).thenReturn(product);
-        when(categoryRepository.getReferenceById(anyLong())).thenReturn(category);
+        when(categoryRepository.findById(existingId)).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(nonExistingId)).thenReturn(Optional.empty());
         doNothing().when(productRepository).deleteById(existingId);
         doThrow(DataIntegrityViolationException.class).when(productRepository).deleteById(dependentId);
         when(productRepository.existsById(existingId)).thenReturn(true);
@@ -104,6 +105,16 @@ public class ProductServiceTests {
         Assertions.assertNotNull(result);
         Assertions.assertEquals(product.getId(), result.id());
         Assertions.assertFalse(result.categories().isEmpty());
+    }
+
+    @Test
+    public void createProductShouldThrowsResourceNotFoundExceptionWhenCategoryIdDoesNotExist() {
+        product.getCategories().clear();
+        product.getCategories().add(CategoryFactory.createInvalidCategory());
+        ProductRequestDTO invalidProductRequestDTO = new ProductRequestDTO(product);
+        ResourceNotFoundException exception =
+                Assertions.assertThrows(ResourceNotFoundException.class, () -> productService.createProduct(invalidProductRequestDTO));
+        Assertions.assertEquals(RESOURCE_NOT_FOUND_EXCEPTION_MESSAGE, exception.getMessage());
     }
 
     @Test
