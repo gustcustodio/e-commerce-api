@@ -10,6 +10,10 @@ public class CategoryFactory {
         return new Category(1L, "Books");
     }
 
+    public static Category createInvalidCategory() {
+        return new Category(1000L, "Invalid Category");
+    }
+
     public static CategoryResponseDTO createCategoryResponseDTO() {
         return new CategoryResponseDTO(createCategory());
     }
