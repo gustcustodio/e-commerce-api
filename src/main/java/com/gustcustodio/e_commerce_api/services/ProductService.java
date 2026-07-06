@@ -9,6 +9,7 @@ import com.gustcustodio.e_commerce_api.repositories.CategoryRepository;
 import com.gustcustodio.e_commerce_api.repositories.ProductRepository;
 import com.gustcustodio.e_commerce_api.services.exceptions.DatabaseException;
 import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -73,7 +74,8 @@ public class ProductService {
         entity.setQuantity(dto.quantity());
         entity.getCategories().clear();
         for (CategoryResponseDTO categoryResponseDTO : dto.categories()) {
-            Category category = categoryRepository.getReferenceById(categoryResponseDTO.id());
+            Category category =
+                    categoryRepository.findById(categoryResponseDTO.id()).orElseThrow(ResourceNotFoundException::new);
             entity.getCategories().add(category);
         }
     }
