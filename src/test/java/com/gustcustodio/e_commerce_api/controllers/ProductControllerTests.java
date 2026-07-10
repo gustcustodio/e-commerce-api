@@ -194,7 +194,8 @@ public class ProductControllerTests {
                 Arguments.of(null, "Invalid Product Description", 50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
                 Arguments.of("Invalid Product", null, 50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
                 Arguments.of("Invalid Product", "Invalid Product Description", -50.0, 10, Set.of(CategoryFactory.createCategoryResponseDTO())),
-                Arguments.of("Invalid Product", "Invalid Product Description", 50.0, -10, Set.of(CategoryFactory.createCategoryResponseDTO()))
+                Arguments.of("Invalid Product", "Invalid Product Description", 50.0, -10, Set.of(CategoryFactory.createCategoryResponseDTO())),
+                Arguments.of("Invalid Product", "Invalid Product Description", 50.0, 10, Set.of())
         );
     }
 
