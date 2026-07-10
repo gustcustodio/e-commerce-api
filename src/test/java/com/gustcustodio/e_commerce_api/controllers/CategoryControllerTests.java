@@ -183,7 +183,8 @@ public class CategoryControllerTests {
         return Stream.of(
                 Arguments.of((String) null),
                 Arguments.of(""),
-                Arguments.of("   ")
+                Arguments.of("A"),
+                Arguments.of("A".repeat(51))
         );
     }
 
