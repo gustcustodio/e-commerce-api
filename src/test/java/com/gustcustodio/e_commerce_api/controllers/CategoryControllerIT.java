@@ -205,6 +205,11 @@ public class CategoryControllerIT {
     }
 
     @Test
+    public void deleteCategoryShouldReturnUnauthorizedWhenNotLogged() throws Exception {
+        ResultActions result = mockMvc.perform(delete("/categories/{id}", existingId));
+        result.andExpect(status().isUnauthorized());
+    }
+    @Test
     public void deleteCategoryShouldReturnNoContentWhenLoggedAsAdminAndIdExists() throws Exception {
         ResultActions result = mockMvc.perform(delete("/categories/{id}", existingId)
                 .header("Authorization", "Bearer " + adminToken));
