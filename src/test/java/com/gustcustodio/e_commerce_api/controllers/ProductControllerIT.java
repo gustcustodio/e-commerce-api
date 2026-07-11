@@ -225,6 +225,11 @@ public class ProductControllerIT {
     }
 
     @Test
+    public void deleteProductShouldReturnUnauthorizedWhenNotLogged() throws Exception {
+        ResultActions result = mockMvc.perform(delete("/products/{id}", existingId));
+        result.andExpect(status().isUnauthorized());
+    }
+    @Test
     public void deleteProductShouldReturnUnauthorizedWhenTokenIsInvalid() throws Exception {
         ResultActions result = mockMvc.perform(delete("/products/{id}", existingId)
                 .header("Authorization", "Bearer " + invalidToken));
