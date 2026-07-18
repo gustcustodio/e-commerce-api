@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping(value = "/profile")
+    @GetMapping(value = "/me")
     public ResponseEntity<UserResponseDTO> findLoggedUser() {
         UserResponseDTO userResponseDTO = userService.findLoggedUser();
         return ResponseEntity.ok(userResponseDTO);
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PutMapping(value = "/profile")
+    @PutMapping(value = "/me")
     public ResponseEntity<UserResponseDTO> updateLoggedUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO userResponseDTO = userService.updateLoggedUser(userRequestDTO);
         return ResponseEntity.ok(userResponseDTO);
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping(value = "/profile")
+    @DeleteMapping(value = "/me")
     public ResponseEntity<Void> deleteLoggedUser() {
         userService.deleteLoggedUser();
         return ResponseEntity.noContent().build();
