@@ -1,6 +1,8 @@
 package com.gustcustodio.e_commerce_api.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,6 +10,8 @@ import java.util.*;
 
 @Entity
 @Table(name = "tb_user")
+@SQLDelete(sql = "UPDATE tb_user SET active = false WHERE id = ?")
+@SQLRestriction("active = true")
 public class User implements UserDetails {
 
     @Id
@@ -25,6 +29,8 @@ public class User implements UserDetails {
 
     private String password;
 
+    private Boolean active = true;
+
     @OneToMany(mappedBy = "client")
     private Set<Order> orders = new HashSet<>();
 
@@ -37,13 +43,14 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String name, String cpf, String phone, String email, String password) {
+    public User(Long id, String name, String cpf, String phone, String email, String password, Boolean active) {
         this.id = id;
         this.name = name;
         this.cpf = cpf;
         this.phone = phone;
         this.email = email;
         this.password = password;
+        this.active = active;
     }
 
     public Long getId() {
@@ -92,6 +99,14 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean isActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Set<Order> getOrders() {

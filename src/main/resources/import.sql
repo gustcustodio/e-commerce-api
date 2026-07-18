@@ -29,10 +29,10 @@ INSERT INTO tb_product_category (product_id, category_id) VALUES (11, 1);
 INSERT INTO tb_product_category (product_id, category_id) VALUES (12, 2);
 INSERT INTO tb_product_category (product_id, category_id) VALUES (12, 3);
 
-INSERT INTO tb_user(name, email, password) VALUES ('Liev Tolstói', 'tolstoi@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe');
-INSERT INTO tb_user(name, email, password) VALUES ('Charles Dickens', 'dickens@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe');
-INSERT INTO tb_user(name, email, password) VALUES ('Oscar Wilde', 'wilde@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe');
-INSERT INTO tb_user(name, email, password) VALUES ('Emily Bronte', 'bronte@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe');
+INSERT INTO tb_user(name, email, password, active) VALUES ('Liev Tolstói', 'tolstoi@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe', true);
+INSERT INTO tb_user(name, email, password, active) VALUES ('Charles Dickens', 'dickens@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe', true);
+INSERT INTO tb_user(name, email, password, active) VALUES ('Oscar Wilde', 'wilde@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe', true);
+INSERT INTO tb_user(name, email, password, active) VALUES ('Emily Bronte', 'bronte@email.com', '$2a$10$VDNktmwwHMKRm8lUbdaHw.oYJbkU6hX3laW1pkyx7m7fb69QMdeJe', true);
 
 INSERT INTO tb_role (authority) VALUES ('ROLE_ADMIN');
 INSERT INTO tb_role (authority) VALUES ('ROLE_CLIENT');

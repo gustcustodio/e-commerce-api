@@ -4,10 +4,8 @@ import com.gustcustodio.e_commerce_api.dtos.UserRequestDTO;
 import com.gustcustodio.e_commerce_api.dtos.UserResponseDTO;
 import com.gustcustodio.e_commerce_api.entities.User;
 import com.gustcustodio.e_commerce_api.repositories.UserRepository;
-import com.gustcustodio.e_commerce_api.services.exceptions.DatabaseException;
 import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -67,14 +64,10 @@ public class UserService implements UserDetailsService {
         return processUpdate(entity, userRequestDTO);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) throw new ResourceNotFoundException();
-        try {
-            userRepository.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException();
-        }
+        User user = userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        userRepository.delete(user);
     }
 
     private UserResponseDTO processUpdate(User entity, UserRequestDTO dto) {
