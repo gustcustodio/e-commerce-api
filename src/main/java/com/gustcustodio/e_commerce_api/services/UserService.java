@@ -65,7 +65,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
+    public void deleteUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         userRepository.delete(user);
     }
