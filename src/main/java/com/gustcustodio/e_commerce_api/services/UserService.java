@@ -6,12 +6,14 @@ import com.gustcustodio.e_commerce_api.entities.User;
 import com.gustcustodio.e_commerce_api.repositories.UserRepository;
 import com.gustcustodio.e_commerce_api.services.exceptions.DatabaseException;
 import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,33 +21,50 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserService implements UserDetailsService {
 
+    private AuthenticationService authenticationService;
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, @Lazy AuthenticationService authenticationService, @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.authenticationService = authenticationService;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+    @Transactional
+    public UserResponseDTO findLoggedUser() {
+        return new UserResponseDTO(authenticationService.loggedUser());
+    }
+
+    @Transactional(readOnly = true)
     public UserResponseDTO findUserById(Long id) {
         User entity = userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         return new UserResponseDTO(entity);
     }
 
+    @Transactional(readOnly = true)
     public Page<UserResponseDTO> findAllUsers(Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<User> page = userRepository.findAll(pageRequest);
         return page.map(UserResponseDTO::new);
     }
 
-    public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
+    @Transactional
+    public UserResponseDTO updateLoggedUser(UserRequestDTO userRequestDTO) {
+        User entity = authenticationService.loggedUser();
+        return processUpdate(entity, userRequestDTO);
+    }
+
+    @Transactional
+    public UserResponseDTO updateUserById(Long id, UserRequestDTO userRequestDTO) {
         User entity = userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        copyDtoToEntity(userRequestDTO, entity);
-        entity = userRepository.save(entity);
-        return new UserResponseDTO(entity);
+        return processUpdate(entity, userRequestDTO);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -58,12 +77,18 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    private UserResponseDTO processUpdate(User entity, UserRequestDTO dto) {
+        copyDtoToEntity(dto, entity);
+        entity = userRepository.save(entity);
+        return new UserResponseDTO(entity);
+    }
+
     private void copyDtoToEntity(UserRequestDTO dto, User entity) {
         entity.setName(dto.name());
         entity.setCpf(dto.cpf());
         entity.setPhone(dto.phone());
         entity.setEmail(dto.email());
-        entity.setPassword(dto.password());
+        entity.setPassword(passwordEncoder.encode(dto.password()));
     }
 
 }
