@@ -15,7 +15,7 @@ import java.util.Date;
 @Component
 public class TokenProvider {
 
-    @Value("${jwt.expiration}")
+    @Value("${jwt.expiration.seconds}")
     private Long expirationTime;
 
     @Value("${jwt.key}")
@@ -28,7 +28,7 @@ public class TokenProvider {
 
     public String buildToken(String username) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + expirationTime);
+        Date expiration = new Date(now.getTime() + expirationTime * 1000L);
 
         return Jwts.builder()
                 .subject(username)
