@@ -19,6 +19,13 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/profile")
+    public ResponseEntity<UserResponseDTO> findLoggedUser() {
+        UserResponseDTO userResponseDTO = userService.findLoggedUser();
+        return ResponseEntity.ok(userResponseDTO);
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserResponseDTO> findUserById(@PathVariable Long id) {
@@ -34,14 +41,21 @@ public class UserController {
         return ResponseEntity.ok(page);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequestDTO) {
-        UserResponseDTO userResponseDTO = userService.updateUser(id, userRequestDTO);
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping(value = "/profile")
+    public ResponseEntity<UserResponseDTO> updateLoggedUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+        UserResponseDTO userResponseDTO = userService.updateLoggedUser(userRequestDTO);
         return ResponseEntity.ok(userResponseDTO);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequestDTO) {
+        UserResponseDTO userResponseDTO = userService.updateUserById(id, userRequestDTO);
+        return ResponseEntity.ok(userResponseDTO);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
