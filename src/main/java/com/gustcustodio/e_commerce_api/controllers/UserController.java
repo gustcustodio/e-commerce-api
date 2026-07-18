@@ -62,4 +62,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping(value = "/profile")
+    public ResponseEntity<Void> deleteLoggedUser() {
+        userService.deleteLoggedUser();
+        return ResponseEntity.noContent().build();
+    }
+
 }

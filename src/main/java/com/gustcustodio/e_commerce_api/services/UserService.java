@@ -70,6 +70,12 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
     }
 
+    @Transactional
+    public void deleteLoggedUser() {
+        User user = authenticationService.loggedUser();
+        userRepository.delete(user);
+    }
+
     private UserResponseDTO processUpdate(User entity, UserRequestDTO dto) {
         copyDtoToEntity(dto, entity);
         entity = userRepository.save(entity);
