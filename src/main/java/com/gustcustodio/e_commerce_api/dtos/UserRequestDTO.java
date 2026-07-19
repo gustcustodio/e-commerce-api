@@ -19,6 +19,7 @@ public record UserRequestDTO(
         @Pattern(regexp = "^\\d{9}$", message = "Phone must be exactly 9 digits")
         String phone,
 
+        @NotBlank(message = "Required field")
         @Email(message = "Email should be valid")
         String email,
 
