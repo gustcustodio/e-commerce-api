@@ -2,10 +2,7 @@ package com.gustcustodio.e_commerce_api.controllers.handler;
 
 import com.gustcustodio.e_commerce_api.dtos.CustomErrorDTO;
 import com.gustcustodio.e_commerce_api.dtos.ValidationErrorDTO;
-import com.gustcustodio.e_commerce_api.services.exceptions.CredentialsException;
-import com.gustcustodio.e_commerce_api.services.exceptions.DatabaseException;
-import com.gustcustodio.e_commerce_api.services.exceptions.ForbiddenException;
-import com.gustcustodio.e_commerce_api.services.exceptions.ResourceNotFoundException;
+import com.gustcustodio.e_commerce_api.services.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +16,7 @@ import java.time.Instant;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<CustomErrorDTO> toResourceNotFoundException(ResourceNotFoundException e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        CustomErrorDTO customErrorDTO = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(status).body(customErrorDTO);
-    }
+    // ! --------------------  HTTP 400 ERROR -------------------- ! //
 
     @ExceptionHandler(DatabaseException.class)
     public ResponseEntity<CustomErrorDTO> toDatabaseException(DatabaseException e, HttpServletRequest request) {
@@ -40,12 +32,32 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(status).body(customErrorDTO);
     }
 
+    @ExceptionHandler(OrderStatusException.class)
+    public ResponseEntity<CustomErrorDTO> toOrderStatusException(OrderStatusException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        CustomErrorDTO customErrorDTO = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(customErrorDTO);
+    }
+
+    // ! -------------------- HTTP 403 ERROR -------------------- ! //
+
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<CustomErrorDTO> toForbiddenException(ForbiddenException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.FORBIDDEN;
         CustomErrorDTO customErrorDTO = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(customErrorDTO);
     }
+
+    // ! -------------------- HTTP 404 ERROR -------------------- ! //
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<CustomErrorDTO> toResourceNotFoundException(ResourceNotFoundException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        CustomErrorDTO customErrorDTO = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(customErrorDTO);
+    }
+
+    // ! -------------------- HTTP 422 ERROR -------------------- ! //
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorDTO> toMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
